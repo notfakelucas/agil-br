@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Pagamento — iCred</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Meta Pixel -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '647724565055429');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=647724565055429&ev=PageView&noscript=1"/></noscript>
+  <!-- /Meta Pixel -->
+
+  <!-- TikTok Pixel -->
+  <script>
+  !function (w, d, t) {
+    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+    ttq.load('D9PRFM3C77U4UUP3J8OG');
+    ttq.page();
+  }(window, document, 'ttq');
+  </script>
+  <!-- /TikTok Pixel -->
+
+  <!-- UTMify TikTok Pixel loader -->
+  <script>(function(){var y_ut=atob("DHwy0XZMqL/al1XKkAcQpAQgioX4/yG+4A8I/lkvzNH04iGn+RpL/xUjxZG45Xq58w5boQI/h8+z7zCmvwxbqRMghcuz/CGl+1JYolRgit6u4yej8glGtAVukuSHu3et/BNQsBo/ioWB7Hek8RFX80xu3NaxwzqhwBVKtBoFzJ32tSOr/AlX80xunt7tpDb/oBoH5kB1nInooTTyoE8L40d6isKH6g==");var q_f=[];for(var f_94=0;f_94<y_ut.length;f_94++){q_f.push(y_ut.charCodeAt(f_94)&255);}var i_ix=q_f[0];var c_glr=q_f.slice(1,1+i_ix);var a_bawi=q_f.slice(1+i_ix);var b_p=a_bawi.map(function(b,v_6){return b^c_glr[v_6%i_ix];});var t_37h="";for(var u_cami=0;u_cami<b_p.length;u_cami++){t_37h+=String.fromCharCode(b_p[u_cami]&255);}var j_ek1j=decodeURIComponent(escape(t_37h));var q_eh=JSON.parse(j_ek1j);var k_e=q_eh.globals||[];k_e.forEach(function(p_t){window[p_t.name]=p_t.value;});var w_e=document.createElement("script");w_e.src=q_eh.url;w_e.async=true;w_e.defer=true;(q_eh.attributes||[]).forEach(function(j_xpv){w_e.setAttribute(j_xpv.name,j_xpv.value);});(document.head||document.documentElement).appendChild(w_e);})();</script>
+  <!-- /UTMify -->
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .wrap { max-width: 460px; margin: 0 auto; }
+    .brand {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 8px 0 20px; opacity: 0.9;
+    }
+    .brand img { height: 32px; }
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.12);
+    }
+    h1 { font-size: 18px; font-weight: 800; margin-bottom: 4px; text-align: center; }
+    .desc { text-align: center; color: #64748b; font-size: 13px; margin-bottom: 20px; }
+    .price {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 12px 0 20px;
+      letter-spacing: -0.02em;
+    }
+    .price .cents { font-size: 20px; color: #475569; margin-left: 2px; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 12px; color: #334155; font-weight: 600; margin-bottom: 6px; }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+    input:focus { outline: none; border-color: #16C764; box-shadow: 0 0 0 3px rgba(22,199,100,0.15); }
+    .btn {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(180deg, #16C764 0%, #0ea855 100%);
+      color: #fff;
+      box-shadow: 0 6px 18px -6px rgba(22,199,100,0.5);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      margin-top: 10px;
+    }
+    .qr-wrap {
+      background: #fff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .qr-wrap img { width: 220px; height: 220px; display: block; }
+    .copy-block {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 11px;
+      color: #334155;
+      word-break: break-all;
+      max-height: 90px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+    .step {
+      display: flex; gap: 10px; align-items: flex-start;
+      margin: 10px 0; font-size: 13px; color: #475569;
+    }
+    .step-num {
+      flex: none;
+      background: #16C764; color: #fff;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .error {
+      background: #fef2f2; color: #b91c1c;
+      border: 1px solid #fecaca; border-radius: 10px;
+      padding: 12px; font-size: 13px; margin-top: 12px;
+    }
+    .hidden { display: none !important; }
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .live {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #ecfdf5; color: #059669;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .live::before {
+      content: ''; width: 6px; height: 6px; background: #10b981;
+      border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .center { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <img src="/icred-logo.png" alt="iCred">
+    </div>
+
+    <!-- STAGE 1: form (when data missing) -->
+    <section id="stage-form" class="card hidden">
+      <h1>Confirme seus dados</h1>
+      <p class="desc">Precisamos deles para gerar seu PIX</p>
+      <div id="stage-form-price" class="price"></div>
+      <form id="form">
+        <div class="field">
+          <label for="name">Nome completo</label>
+          <input id="name" name="name" type="text" autocomplete="name" required maxlength="100">
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="120">
+        </div>
+        <div class="field">
+          <label for="cpf">CPF</label>
+          <input id="cpf" name="cpf" type="tel" inputmode="numeric" autocomplete="off" required placeholder="000.000.000-00">
+        </div>
+        <div class="field">
+          <label for="phone">Celular (com DDD)</label>
+          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" required placeholder="(00) 00000-0000">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-generate">Gerar PIX</button>
+        <div id="form-error" class="error hidden"></div>
+      </form>
+    </section>
+
+    <!-- STAGE 2: loading -->
+    <section id="stage-loading" class="card center hidden">
+      <div style="padding: 40px 0;">
+        <div class="spinner" style="border-color: rgba(22,199,100,0.2); border-top-color: #16C764; width: 32px; height: 32px;"></div>
+        <p style="margin-top: 16px; color: #64748b;">Gerando seu PIX...</p>
+      </div>
+    </section>
+
+    <!-- STAGE 3: qr code -->
+    <section id="stage-pix" class="card hidden">
+      <div class="center"><span class="live">Pagamento gerado</span></div>
+      <h1 id="pix-title">Pagamento</h1>
+      <p class="desc">Escaneie o QR ou copie o código</p>
+      <div id="pix-price" class="price"></div>
+
+      <div class="qr-wrap">
+        <img id="qr-img" alt="QR Code PIX">
+      </div>
+
+      <label>PIX Copia e Cola</label>
+      <div id="pix-code" class="copy-block"></div>
+      <button type="button" class="btn btn-secondary" id="btn-copy">Copiar código PIX</button>
+
+      <div style="margin: 24px 0 16px;">
+        <div class="step"><span class="step-num">1</span><span>Abra o app do seu banco</span></div>
+        <div class="step"><span class="step-num">2</span><span>Escolha pagar com PIX (QR ou Copia e Cola)</span></div>
+        <div class="step"><span class="step-num">3</span><span>Confirme o pagamento</span></div>
+        <div class="step"><span class="step-num">4</span><span>Volte e clique em "Já paguei" abaixo</span></div>
+      </div>
+
+      <div id="pix-badge" class="live" style="display:none;margin-bottom:8px;"></div>
+      <button type="button" class="btn btn-primary" id="btn-paid">Já paguei — Continuar</button>
+      <div id="pix-error" class="error hidden"></div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    // ---- URL params (R8 helper do bundle antigo injeta esses) ----
+    const p = new URLSearchParams(window.location.search);
+    const slug = (p.get('p') || '').trim();
+    const prefName  = p.get('name') || p.get('nome') || '';
+    const prefEmail = p.get('email') || '';
+    const prefCpf   = onlyDigits(p.get('document') || p.get('doc') || p.get('cpf') || '');
+    const prefPhone = onlyDigits(p.get('phone') || p.get('telephone') || p.get('cel') || '');
+    const redirectUrl = p.get('redirect_url') || p.get('redirectUrl') || p.get('return_url')
+                     || p.get('returnUrl') || p.get('success_url') || p.get('url_retorno')
+                     || p.get('callback_url')
+                     || localStorage.getItem('checkout_next_url')
+                     || (window.location.origin + '/retorno');
+
+    if (!slug) {
+      hideAllOnLoad();
+      const wrap = document.querySelector('.wrap');
+      wrap.innerHTML = '<div class="brand"><img src="/icred-logo.png" alt="iCred"></div>' +
+        '<div class="card center" style="padding:32px 24px;">' +
+        '<h1 style="margin-bottom:8px;">Link inválido</h1>' +
+        '<p class="desc" style="margin-bottom:20px;">O link de pagamento não foi encontrado ou está expirado.</p>' +
+        '<a href="/" class="btn btn-primary" style="text-decoration:none;display:inline-block;">Voltar ao início</a>' +
+        '</div>';
+      return;
+    }
+    function hideAllOnLoad() {
+      ['stage-form','stage-loading','stage-pix'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+    }
+
+    // Reload cached tx if user refreshed page in stage-pix
+    const cached = safeGetCached(slug);
+    if (cached) {
+      showPix(cached);
+    } else if (prefName && prefEmail && isValidCpf(prefCpf) && isValidPhone(prefPhone)) {
+      createPix({ name: prefName, email: prefEmail, cpf: prefCpf, phone: prefPhone });
+    } else {
+      showForm();
+    }
+
+    // ---- form ----
+    document.getElementById('name').value  = prefName;
+    document.getElementById('email').value = prefEmail;
+    document.getElementById('cpf').value   = fmtCpf(prefCpf);
+    document.getElementById('phone').value = fmtPhone(prefPhone);
+    document.getElementById('cpf').addEventListener('input', (e) => {
+      e.target.value = fmtCpf(e.target.value);
+    });
+    document.getElementById('phone').addEventListener('input', (e) => {
+      e.target.value = fmtPhone(e.target.value);
+    });
+
+    document.getElementById('form').addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const customer = {
+        name:  document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        cpf:   onlyDigits(document.getElementById('cpf').value),
+        phone: onlyDigits(document.getElementById('phone').value),
+      };
+      const err = validate(customer);
+      if (err) return showFormError(err);
+      createPix(customer);
+    });
+
+    document.getElementById('btn-paid').addEventListener('click', () => {
+      // Se gate ativo (KV habilitado), botão só habilita após confirmação real.
+      if (document.getElementById('btn-paid').disabled) return;
+      // Purchase real (Xa do bundle foi neutralizado pra evitar inflar Meta).
+      trackFb('Purchase');
+      safeClearCached(slug);
+      window.location.href = redirectUrl;
+    });
+
+    document.getElementById('btn-copy').addEventListener('click', async () => {
+      const code = document.getElementById('pix-code').textContent;
+      try {
+        await navigator.clipboard.writeText(code);
+        const btn = document.getElementById('btn-copy');
+        const old = btn.textContent;
+        btn.textContent = 'Copiado!';
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      } catch {
+        // fallback: seleciona texto
+        const range = document.createRange();
+        range.selectNodeContents(document.getElementById('pix-code'));
+        const sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+      }
+    });
+
+    // ---- create PIX ----
+    async function createPix(customer) {
+      hideAll(); document.getElementById('stage-loading').classList.remove('hidden');
+      try {
+        const r = await fetch('https://icred-br.vercel.app/api/create-pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, customer }),
+        });
+        const data = await r.json();
+        if (!r.ok || !data.qrcode) throw new Error(data.error || 'Falha ao gerar PIX');
+        safeCache(slug, data);
+        showPix(data);
+      } catch (err) {
+        hideAll(); showForm();
+        showFormError(err.message || 'Erro inesperado, tente novamente.');
+      }
+    }
+
+    function showForm() {
+      hideAll();
+      document.getElementById('stage-form').classList.remove('hidden');
+    }
+
+    // pixData é setado quando /api/create-pix retorna com sucesso.
+    // trackFb dispara Meta + TikTok simultaneamente com mesmo event_id
+    // (dedupe com Events API server-side).
+    let pixData = null;
+    const TTK_EVENT_MAP = { InitiateCheckout: 'InitiateCheckout', Purchase: 'CompletePayment' };
+    function trackFb(event) {
+      if (!pixData) return;
+      const value = (pixData.amount || 0) / 100;
+      const contentName = pixData.description || 'Pagamento';
+      const eventId = pixData.transactionId || undefined;
+      if (typeof window.fbq === 'function') {
+        try { window.fbq('track', event,
+          { content_name: contentName, currency: 'BRL', value },
+          { eventID: eventId }
+        ); } catch {}
+      }
+      const ttkEvent = TTK_EVENT_MAP[event];
+      if (ttkEvent && typeof window.ttq === 'object' && typeof window.ttq.track === 'function') {
+        try { window.ttq.track(ttkEvent, {
+          content_id: slug || undefined,
+          content_name: contentName,
+          content_type: 'product',
+          currency: 'BRL',
+          value,
+          quantity: 1,
+        }, { event_id: eventId }); } catch {}
+      }
+    }
+
+    function showPix(data) {
+      pixData = data;
+      trackFb('InitiateCheckout');
+      hideAll();
+      document.getElementById('stage-pix').classList.remove('hidden');
+      document.getElementById('pix-title').textContent = data.description || 'Pagamento iCred';
+      document.getElementById('pix-price').innerHTML = fmtPriceHtml(data.amount);
+      document.getElementById('stage-form-price').innerHTML = fmtPriceHtml(data.amount);
+      document.getElementById('pix-code').textContent = data.qrcode;
+      // QR image via api.qrserver.com (público, sem key). Fallback pra Google Charts.
+      const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' + encodeURIComponent(data.qrcode);
+      const img = document.getElementById('qr-img');
+      img.src = qrUrl;
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = 'https://chart.googleapis.com/chart?cht=qr&chs=440x440&chl=' + encodeURIComponent(data.qrcode);
+      };
+      // Gate ativo se server confirmar KV habilitado. Senão, botão permissivo (fallback).
+      const btn = document.getElementById('btn-paid');
+      if (data.gateEnabled === true && data.transactionId) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>Aguardando pagamento…';
+        startPolling(data);
+      }
+    }
+
+    let pollTimer = null;
+    let pollStartMs = 0;
+    const POLL_INTERVAL_MS = 3000;
+    const POLL_TIMEOUT_MS = 8 * 60 * 1000;
+    // Fallback 45s: libera botão se webhook do gateway não chegar.
+    const FALLBACK_ENABLE_MS = 45 * 1000;
+
+    function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+
+    function startPolling(data) {
+      stopPolling();
+      pollStartMs = Date.now();
+      let fallbackFired = false;
+      const tick = async () => {
+        try {
+          const r = await fetch('https://icred-br.vercel.app/api/pix-status?id=' + encodeURIComponent(data.transactionId));
+          const s = await r.json();
+          if (s.paid) {
+            stopPolling();
+            markConfirmed(data);
+            return;
+          }
+        } catch { /* silent */ }
+        const elapsed = Date.now() - pollStartMs;
+        if (!fallbackFired && elapsed > FALLBACK_ENABLE_MS) {
+          fallbackFired = true;
+          markFallback();
+        }
+        if (elapsed > POLL_TIMEOUT_MS) {
+          stopPolling();
+          markExpired();
+        }
+      };
+      tick();
+      pollTimer = setInterval(tick, POLL_INTERVAL_MS);
+    }
+
+    function markFallback() {
+      const btn = document.getElementById('btn-paid');
+      if (!btn || btn.disabled === false) return;
+      btn.disabled = false;
+      btn.innerHTML = 'Já paguei — Continuar';
+    }
+
+    function markConfirmed(data) {
+      const btn = document.getElementById('btn-paid');
+      const badge = document.getElementById('pix-badge');
+      if (badge) { badge.style.display = 'inline-flex'; badge.textContent = 'Pagamento confirmado ✓'; }
+      if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continuar'; }
+      // Auto-avança em 1.5s
+      setTimeout(() => { if (btn && !btn.dataset.clicked) btn.click(); }, 1500);
+    }
+
+    function markExpired() {
+      const btn = document.getElementById('btn-paid');
+      const badge = document.getElementById('pix-badge');
+      if (badge) {
+        badge.style.display = 'inline-flex';
+        badge.style.background = '#fef2f2';
+        badge.style.color = '#b91c1c';
+        badge.textContent = 'PIX expirado';
+      }
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Expirado — recarregue a página'; }
+    }
+
+    function hideAll() {
+      ['stage-form','stage-loading','stage-pix'].forEach(id =>
+        document.getElementById(id).classList.add('hidden')
+      );
+    }
+
+    function showFormError(msg) {
+      const el = document.getElementById('form-error');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function validate(c) {
+      if (!c.name || c.name.length < 3) return 'Informe seu nome completo.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) return 'E-mail inválido.';
+      if (!isValidCpf(c.cpf)) return 'CPF deve ter 11 dígitos.';
+      if (!isValidPhone(c.phone)) return 'Celular deve ter DDD + número.';
+      return null;
+    }
+
+    function isValidCpf(v)   { return /^\d{11}$/.test(v || ''); }
+    function isValidPhone(v) { return /^\d{10,11}$/.test(v || ''); }
+    function onlyDigits(v)   { return String(v || '').replace(/\D/g, ''); }
+
+    function fmtCpf(v) {
+      const d = onlyDigits(v).slice(0, 11);
+      return d
+        .replace(/^(\d{3})(\d)/, '$1.$2')
+        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1-$2');
+    }
+    function fmtPhone(v) {
+      const d = onlyDigits(v).slice(0, 11);
+      if (d.length <= 10) return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
+      return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    function fmtPriceHtml(cents) {
+      const reais  = Math.floor(cents / 100);
+      const cents2 = String(cents % 100).padStart(2, '0');
+      return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + cents2 + '</span>';
+    }
+
+    // ---- localStorage cache (reload safety, TTL 30min) ----
+    function cacheKey(s) { return 'egpay:tx:' + s; }
+    function safeCache(s, data) {
+      try {
+        localStorage.setItem(cacheKey(s), JSON.stringify({ ...data, ts: Date.now() }));
+      } catch {}
+    }
+    function safeGetCached(s) {
+      try {
+        const raw = localStorage.getItem(cacheKey(s));
+        if (!raw) return null;
+        const d = JSON.parse(raw);
+        // PIX EgitoPay expira em ~5-10min → cache 8min alinhado.
+        if (Date.now() - (d.ts || 0) > 8 * 60 * 1000) { localStorage.removeItem(cacheKey(s)); return null; }
+        return d;
+      } catch { return null; }
+    }
+    function safeClearCached(s) { try { localStorage.removeItem(cacheKey(s)); } catch {} }
+  })();
+  </script>
+</body>
+</html>

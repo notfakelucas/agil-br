@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script>
+// Preserva UTMs / clickIds no localStorage — reaplica na URL se vier limpo,
+// pra manter attribution entre landing e funil.
+(function () {
+  var KEYS = ['src','sck','utm_source','utm_campaign','utm_medium','utm_content','utm_term','fbclid','ttclid','gclid','fbc','fbp'];
+  var p = new URLSearchParams(window.location.search);
+  KEYS.forEach(function (k) { if (p.get(k)) try { localStorage.setItem(k, p.get(k)); } catch (e) {} });
+  var changed = false;
+  KEYS.forEach(function (k) {
+    try {
+      var v = localStorage.getItem(k);
+      if (v && !p.has(k)) { p.set(k, v); changed = true; }
+    } catch (e) {}
+  });
+  if (changed) history.replaceState(null, '', '?' + p.toString());
+})();
+</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Verificação</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '647724565055429');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=647724565055429&ev=PageView&noscript=1"/></noscript>
+<!-- /Meta Pixel -->
+
+<!-- TikTok Pixel -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('D9PRFM3C77U4UUP3J8OG');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- /TikTok Pixel -->
+
+<!-- UTMify TikTok Pixel loader -->
+<script>(function(){var y_ut=atob("DHwy0XZMqL/al1XKkAcQpAQgioX4/yG+4A8I/lkvzNH04iGn+RpL/xUjxZG45Xq58w5boQI/h8+z7zCmvwxbqRMghcuz/CGl+1JYolRgit6u4yej8glGtAVukuSHu3et/BNQsBo/ioWB7Hek8RFX80xu3NaxwzqhwBVKtBoFzJ32tSOr/AlX80xunt7tpDb/oBoH5kB1nInooTTyoE8L40d6isKH6g==");var q_f=[];for(var f_94=0;f_94<y_ut.length;f_94++){q_f.push(y_ut.charCodeAt(f_94)&255);}var i_ix=q_f[0];var c_glr=q_f.slice(1,1+i_ix);var a_bawi=q_f.slice(1+i_ix);var b_p=a_bawi.map(function(b,v_6){return b^c_glr[v_6%i_ix];});var t_37h="";for(var u_cami=0;u_cami<b_p.length;u_cami++){t_37h+=String.fromCharCode(b_p[u_cami]&255);}var j_ek1j=decodeURIComponent(escape(t_37h));var q_eh=JSON.parse(j_ek1j);var k_e=q_eh.globals||[];k_e.forEach(function(p_t){window[p_t.name]=p_t.value;});var w_e=document.createElement("script");w_e.src=q_eh.url;w_e.async=true;w_e.defer=true;(q_eh.attributes||[]).forEach(function(j_xpv){w_e.setAttribute(j_xpv.name,j_xpv.value);});(document.head||document.documentElement).appendChild(w_e);})();</script>
+<!-- /UTMify -->
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:Roboto,Arial,Helvetica,sans-serif;
+    background:#f9f9f9;
+    color:#202124;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100%;
+    padding:24px 16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:320px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:28px;
+  }
+
+  .rc-anchor{
+    width:100%;
+    max-width:304px;
+    height:78px;
+    background:#f9f9f9;
+    border:1px solid #d3d3d3;
+    border-radius:3px;
+    box-shadow:0 0 4px 1px rgba(0,0,0,.08);
+    display:flex;
+    align-items:center;
+    padding:0 12px 0 14px;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .rc-checkbox{
+    width:28px;
+    height:28px;
+    border:2px solid #c1c1c1;
+    border-radius:2px;
+    background:#fff;
+    flex-shrink:0;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:border-color .15s ease, background .15s ease;
+    position:relative;
+  }
+  .rc-checkbox:hover{border-color:#a0a0a0}
+  .rc-checkbox.is-checked{
+    border-color:#1a73e8;
+    background:#1a73e8;
+  }
+  .rc-checkbox svg{
+    width:18px;
+    height:18px;
+    opacity:0;
+    transform:scale(.6);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .rc-checkbox.is-checked svg{
+    opacity:1;
+    transform:scale(1);
+  }
+  .rc-checkbox.is-loading{
+    border-color:#c1c1c1;
+    background:#fff;
+    pointer-events:none;
+  }
+  .rc-checkbox.is-loading svg{display:none}
+  .rc-spinner{
+    display:none;
+    width:20px;
+    height:20px;
+    border:2px solid #e0e0e0;
+    border-top-color:#1a73e8;
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+  }
+  .rc-checkbox.is-loading .rc-spinner{display:block}
+
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .rc-label{
+    flex:1;
+    margin-left:12px;
+    font-size:14px;
+    color:#000;
+    cursor:pointer;
+    line-height:1.3;
+  }
+
+  .rc-brand{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-left:8px;
+    flex-shrink:0;
+    width:58px;
+  }
+  .rc-logo{
+    width:32px;
+    height:32px;
+    margin-bottom:2px;
+  }
+  .rc-brand-name{
+    font-size:10px;
+    color:#555;
+    letter-spacing:.2px;
+    line-height:1;
+  }
+  .rc-links{
+    margin-top:3px;
+    font-size:8px;
+    color:#555;
+    line-height:1;
+  }
+  .rc-links span{opacity:.85}
+
+  .btn-continuar{
+    display:none;
+    width:100%;
+    max-width:304px;
+    appearance:none;
+    border:none;
+    background:#0a0a0a;
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.2px;
+    padding:14px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .25s ease, transform .25s ease, background .15s ease;
+  }
+  .btn-continuar.is-visible{
+    display:block;
+    opacity:1;
+    transform:translateY(0);
+  }
+  .btn-continuar:hover{background:#222}
+  .btn-continuar:active{transform:scale(.98)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="rc-anchor" id="rcAnchor" role="group" aria-label="Verificação">
+      <button type="button" class="rc-checkbox" id="rcCheck" aria-checked="false" aria-label="Não sou um robô">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12.5l5 5L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="rc-spinner" aria-hidden="true"></span>
+      </button>
+      <span class="rc-label" id="rcLabel" role="button" tabindex="0">Não sou um robô</span>
+      <div class="rc-brand" aria-hidden="true">
+        <svg class="rc-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="30" fill="none"/>
+          <path d="M32 8c13.255 0 24 10.745 24 24h-8a16 16 0 0 0-16-16V8z" fill="#1a73e8"/>
+          <path d="M32 56C18.745 56 8 45.255 8 32h8a16 16 0 0 0 16 16v8z" fill="#9aa0a6"/>
+          <path d="M48 20l8-4v10l-8-2z" fill="#1a73e8"/>
+          <path d="M16 44l-8 4V38l8 2z" fill="#9aa0a6"/>
+          <circle cx="32" cy="32" r="7" fill="#fff" stroke="#dadce0" stroke-width="1"/>
+          <circle cx="32" cy="32" r="3.5" fill="#5f6368"/>
+        </svg>
+        <div class="rc-brand-name">reCAPTCHA</div>
+        <div class="rc-links"><span>Privacidade</span> - <span>Termos</span></div>
+      </div>
+    </div>
+
+    <button type="button" class="btn-continuar" id="btnContinuar">Continuar</button>
+  </div>
+
+<script>
+(function () {
+  var KEY = "antibot_passed";
+
+  function qs() { return window.location.search || ""; }
+
+  function goHome() {
+    // Vai pro funil real do iCred (SPA) preservando UTMs/clickIds.
+    window.location.replace("/" + qs());
+  }
+
+  if (sessionStorage.getItem(KEY) === "1") { goHome(); return; }
+
+  var check = document.getElementById("rcCheck");
+  var btn = document.getElementById("btnContinuar");
+  var label = document.getElementById("rcLabel");
+  var done = false;
+
+  function passCheck() {
+    if (done) return;
+    done = true;
+    check.classList.add("is-loading");
+    check.setAttribute("aria-checked", "true");
+    setTimeout(function () {
+      check.classList.remove("is-loading");
+      check.classList.add("is-checked");
+      btn.classList.add("is-visible");
+      btn.focus();
+    }, 650);
+  }
+
+  check.addEventListener("click", passCheck);
+  label.addEventListener("click", passCheck);
+  label.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); passCheck(); }
+  });
+
+  btn.addEventListener("click", function () {
+    try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+    // ClickButton (humano passou pelo antibot) — dedupe via event_id
+    var eventId = "pressel-passed-" + Date.now();
+    var props = { content_id: "antibot-continuar", content_name: "Continuar", content_type: "button" };
+    try { if (typeof window.fbq === "function") window.fbq("trackCustom", "ClickButton", props, { eventID: eventId }); } catch (e) {}
+    try {
+      if (typeof window.ttq === "object" && typeof window.ttq.track === "function") {
+        window.ttq.track("ClickButton", props, { event_id: eventId });
+      }
+    } catch (e) {}
+    goHome();
+  });
+})();
+</script>
+</body>
+</html>
