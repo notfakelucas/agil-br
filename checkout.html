@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Pagamento — iCred</title>
+  <title>Pagamento — Ágil</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,10 +20,10 @@
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '647724565055429');
+  fbq('init', '4178589432432214');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=647724565055429&ev=PageView&noscript=1"/></noscript>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4178589432432214&ev=PageView&noscript=1"/></noscript>
   <!-- /Meta Pixel -->
 
   <!-- TikTok Pixel -->
@@ -55,7 +55,7 @@
       display: flex; align-items: center; justify-content: center;
       gap: 8px; padding: 8px 0 20px; opacity: 0.9;
     }
-    .brand img { height: 32px; }
+    .brand img { height: 64px; }
     .card {
       background: #fff;
       border: 1px solid #e2e8f0;
@@ -175,14 +175,13 @@
 <body>
   <div class="wrap">
     <div class="brand">
-      <img src="/icred-logo.png" alt="iCred">
+      <img src="/agil-logo.png" alt="Ágil">
     </div>
 
     <!-- STAGE 1: form (when data missing) -->
     <section id="stage-form" class="card hidden">
       <h1>Confirme seus dados</h1>
       <p class="desc">Precisamos deles para gerar seu PIX</p>
-      <div id="stage-form-price" class="price"></div>
       <form id="form">
         <div class="field">
           <label for="name">Nome completo</label>
@@ -241,6 +240,7 @@
     </section>
   </div>
 
+  <script src="/assets/pix-shared.js"></script>
   <script>
   (function () {
     // ---- URL params (R8 helper do bundle antigo injeta esses) ----
@@ -256,10 +256,16 @@
                      || localStorage.getItem('checkout_next_url')
                      || (window.location.origin + '/retorno');
 
+    // Declared here (not further down) so the cached-tx path below — which
+    // calls showPix() synchronously — never reads pixData before it exists.
+    let pixData = null;
+    let lastCustomer = null;
+    let activePoll = null;
+
     if (!slug) {
       hideAllOnLoad();
       const wrap = document.querySelector('.wrap');
-      wrap.innerHTML = '<div class="brand"><img src="/icred-logo.png" alt="iCred"></div>' +
+      wrap.innerHTML = '<div class="brand"><img src="/agil-logo.png" alt="Ágil"></div>' +
         '<div class="card center" style="padding:32px 24px;">' +
         '<h1 style="margin-bottom:8px;">Link inválido</h1>' +
         '<p class="desc" style="margin-bottom:20px;">O link de pagamento não foi encontrado ou está expirado.</p>' +
@@ -279,7 +285,8 @@
     if (cached) {
       showPix(cached);
     } else if (prefName && prefEmail && isValidCpf(prefCpf) && isValidPhone(prefPhone)) {
-      createPix({ name: prefName, email: prefEmail, cpf: prefCpf, phone: prefPhone });
+      lastCustomer = { name: prefName, email: prefEmail, cpf: prefCpf, phone: prefPhone };
+      createPix(lastCustomer);
     } else {
       showForm();
     }
@@ -306,14 +313,18 @@
       };
       const err = validate(customer);
       if (err) return showFormError(err);
+      lastCustomer = customer;
       createPix(customer);
     });
 
     document.getElementById('btn-paid').addEventListener('click', () => {
-      // Se gate ativo (KV habilitado), botão só habilita após confirmação real.
-      if (document.getElementById('btn-paid').disabled) return;
+      const btn = document.getElementById('btn-paid');
+      // Se gate ativo, botão só habilita após confirmação real (polling) ou fallback.
+      if (btn.disabled) return;
+      if (btn.dataset.clicked) return; // evita disparo duplo (clique manual + auto-avanço)
+      btn.dataset.clicked = '1';
       // Purchase real (Xa do bundle foi neutralizado pra evitar inflar Meta).
-      trackFb('Purchase');
+      if (pixData) PixShared.trackEvent('Purchase', { data: pixData, customer: lastCustomer, slug });
       safeClearCached(slug);
       window.location.href = redirectUrl;
     });
@@ -339,7 +350,7 @@
     async function createPix(customer) {
       hideAll(); document.getElementById('stage-loading').classList.remove('hidden');
       try {
-        const r = await fetch('https://icred-br.vercel.app/api/create-pix', {
+        const r = await fetch('/api/create-pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug, customer }),
@@ -359,43 +370,13 @@
       document.getElementById('stage-form').classList.remove('hidden');
     }
 
-    // pixData é setado quando /api/create-pix retorna com sucesso.
-    // trackFb dispara Meta + TikTok simultaneamente com mesmo event_id
-    // (dedupe com Events API server-side).
-    let pixData = null;
-    const TTK_EVENT_MAP = { InitiateCheckout: 'InitiateCheckout', Purchase: 'CompletePayment' };
-    function trackFb(event) {
-      if (!pixData) return;
-      const value = (pixData.amount || 0) / 100;
-      const contentName = pixData.description || 'Pagamento';
-      const eventId = pixData.transactionId || undefined;
-      if (typeof window.fbq === 'function') {
-        try { window.fbq('track', event,
-          { content_name: contentName, currency: 'BRL', value },
-          { eventID: eventId }
-        ); } catch {}
-      }
-      const ttkEvent = TTK_EVENT_MAP[event];
-      if (ttkEvent && typeof window.ttq === 'object' && typeof window.ttq.track === 'function') {
-        try { window.ttq.track(ttkEvent, {
-          content_id: slug || undefined,
-          content_name: contentName,
-          content_type: 'product',
-          currency: 'BRL',
-          value,
-          quantity: 1,
-        }, { event_id: eventId }); } catch {}
-      }
-    }
-
     function showPix(data) {
       pixData = data;
-      trackFb('InitiateCheckout');
+      PixShared.trackEvent('InitiateCheckout', { data, customer: lastCustomer, slug });
       hideAll();
       document.getElementById('stage-pix').classList.remove('hidden');
-      document.getElementById('pix-title').textContent = data.description || 'Pagamento iCred';
-      document.getElementById('pix-price').innerHTML = fmtPriceHtml(data.amount);
-      document.getElementById('stage-form-price').innerHTML = fmtPriceHtml(data.amount);
+      document.getElementById('pix-title').textContent = data.description || 'Pagamento Ágil';
+      document.getElementById('pix-price').innerHTML = PixShared.fmtPrice(data.amount);
       document.getElementById('pix-code').textContent = data.qrcode;
       // QR image via api.qrserver.com (público, sem key). Fallback pra Google Charts.
       const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' + encodeURIComponent(data.qrcode);
@@ -405,7 +386,8 @@
         img.onerror = null;
         img.src = 'https://chart.googleapis.com/chart?cht=qr&chs=440x440&chl=' + encodeURIComponent(data.qrcode);
       };
-      // Gate ativo se server confirmar KV habilitado. Senão, botão permissivo (fallback).
+      // gateEnabled vem sempre true do server hoje (sem KV no projeto). Se
+      // algum dia vier false, o botão fica liberado direto (fallback).
       const btn = document.getElementById('btn-paid');
       if (data.gateEnabled === true && data.transactionId) {
         btn.disabled = true;
@@ -414,57 +396,45 @@
       }
     }
 
-    let pollTimer = null;
-    let pollStartMs = 0;
     const POLL_INTERVAL_MS = 3000;
     const POLL_TIMEOUT_MS = 8 * 60 * 1000;
-    // Fallback 45s: libera botão se webhook do gateway não chegar.
-    const FALLBACK_ENABLE_MS = 45 * 1000;
 
-    function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
-
+    // Sem fallback por tempo: botão só libera com confirmação real (paid).
     function startPolling(data) {
-      stopPolling();
-      pollStartMs = Date.now();
-      let fallbackFired = false;
-      const tick = async () => {
-        try {
-          const r = await fetch('https://icred-br.vercel.app/api/pix-status?id=' + encodeURIComponent(data.transactionId));
-          const s = await r.json();
-          if (s.paid) {
-            stopPolling();
-            markConfirmed(data);
-            return;
-          }
-        } catch { /* silent */ }
-        const elapsed = Date.now() - pollStartMs;
-        if (!fallbackFired && elapsed > FALLBACK_ENABLE_MS) {
-          fallbackFired = true;
-          markFallback();
-        }
-        if (elapsed > POLL_TIMEOUT_MS) {
-          stopPolling();
-          markExpired();
-        }
-      };
-      tick();
-      pollTimer = setInterval(tick, POLL_INTERVAL_MS);
+      if (activePoll) activePoll.stop();
+      activePoll = PixShared.poll({
+        transactionId: data.transactionId,
+        expiresAt: data.expiresAt,
+        intervalMs: POLL_INTERVAL_MS,
+        timeoutMs: POLL_TIMEOUT_MS,
+        onPaid: () => markConfirmed(),
+        onRejected: (status) => markRejected(status),
+        onExpired: () => markExpired(),
+      });
     }
 
-    function markFallback() {
-      const btn = document.getElementById('btn-paid');
-      if (!btn || btn.disabled === false) return;
-      btn.disabled = false;
-      btn.innerHTML = 'Já paguei — Continuar';
-    }
-
-    function markConfirmed(data) {
+    function markConfirmed() {
       const btn = document.getElementById('btn-paid');
       const badge = document.getElementById('pix-badge');
       if (badge) { badge.style.display = 'inline-flex'; badge.textContent = 'Pagamento confirmado ✓'; }
       if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continuar'; }
       // Auto-avança em 1.5s
-      setTimeout(() => { if (btn && !btn.dataset.clicked) btn.click(); }, 1500);
+      setTimeout(() => { const b = document.getElementById('btn-paid'); if (b && !b.dataset.clicked) b.click(); }, 1500);
+    }
+
+    function markRejected(status) {
+      const btn = document.getElementById('btn-paid');
+      const badge = document.getElementById('pix-badge');
+      const msg = status === 'refunded' ? 'PIX estornado'
+                : status === 'chargeback' ? 'Pagamento contestado'
+                : 'Pagamento recusado';
+      if (badge) {
+        badge.style.display = 'inline-flex';
+        badge.style.background = '#fef2f2';
+        badge.style.color = '#b91c1c';
+        badge.textContent = msg;
+      }
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Gere um novo PIX'; }
     }
 
     function markExpired() {
@@ -515,14 +485,8 @@
       if (d.length <= 10) return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
       return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
     }
-    function fmtPriceHtml(cents) {
-      const reais  = Math.floor(cents / 100);
-      const cents2 = String(cents % 100).padStart(2, '0');
-      return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + cents2 + '</span>';
-    }
-
     // ---- localStorage cache (reload safety, TTL 30min) ----
-    function cacheKey(s) { return 'egpay:tx:' + s; }
+    function cacheKey(s) { return 'flevopay:tx:' + s; }
     function safeCache(s, data) {
       try {
         localStorage.setItem(cacheKey(s), JSON.stringify({ ...data, ts: Date.now() }));
@@ -533,7 +497,7 @@
         const raw = localStorage.getItem(cacheKey(s));
         if (!raw) return null;
         const d = JSON.parse(raw);
-        // PIX EgitoPay expira em ~5-10min → cache 8min alinhado.
+        // PIX Flevopay expira em ~5-10min → cache 8min alinhado.
         if (Date.now() - (d.ts || 0) > 8 * 60 * 1000) { localStorage.removeItem(cacheKey(s)); return null; }
         return d;
       } catch { return null; }

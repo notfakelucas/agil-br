@@ -29,10 +29,10 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '647724565055429');
+    fbq('init', '4178589432432214');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=647724565055429&ev=PageView&noscript=1"/></noscript>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4178589432432214&ev=PageView&noscript=1"/></noscript>
     <!-- /Meta Pixel -->
 
     <!-- TikTok Pixel -->
@@ -51,6 +51,7 @@
 
     <script type="module" crossorigin src="/assets/index-BPEpE3Sa.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-CNJz4aht.css">
+    <script src="/assets/pix-shared.js"></script>
 
     <style>
       /* PIX modal — inline, sem dependência do CSS do bundle */
@@ -210,25 +211,17 @@
         }
       }
 
-      function fmtPrice(cents) {
-        const reais = Math.floor(cents / 100);
-        const c = String(cents % 100).padStart(2, '0');
-        return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + c + '</span>';
-      }
-
       const root = document.getElementById('pix-modal-root');
       const body = document.getElementById('pm-body');
-      let currentNext = null;
-      let pollTimer = null;
-      let pollStartMs = 0;
+      let currentSlug = null;
+      let currentCustomer = null;
+      let isLoading = false;
+      let activePoll = null;
       const POLL_INTERVAL_MS = 3000;
       const POLL_TIMEOUT_MS = 8 * 60 * 1000; // 8min (PIX expira ~5-10min)
-      // Fallback: se em 45s ninguém confirmar (webhook do gateway pode não estar
-      // chegando), libera botão pra não travar conversão. Sec/UX trade-off.
-      const FALLBACK_ENABLE_MS = 45 * 1000;
 
       function stopPolling() {
-        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+        if (activePoll) { activePoll.stop(); activePoll = null; }
       }
 
       function open() {
@@ -270,8 +263,9 @@
       function renderPix(data) {
         const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' +
           encodeURIComponent(data.qrcode);
-        // Se KV desabilitado no server (gateEnabled=false) → botão liberado direto (fallback).
-        // Se KV habilitado → botão desabilitado até polling confirmar pagamento.
+        // gateEnabled vem sempre true do server hoje (sem KV no projeto — ver
+        // flevopay-webhook.js). Se algum dia a criação de PIX puder responder
+        // sem gate, o botão fica liberado direto em vez de esperar o polling.
         const gated = data.gateEnabled === true;
         const btnInitialText = gated ? 'Aguardando pagamento…' : 'Já paguei — Continuar';
         const btnInitialDisabled = gated ? 'disabled' : '';
@@ -280,7 +274,7 @@
           '<span class="pm-badge" id="pm-badge">Pagamento gerado</span>' +
           '<h2 class="pm-title">' + escapeHtml(data.description || 'Pagamento') + '</h2>' +
           '<p class="pm-desc" id="pm-desc">Escaneie o QR ou copie o código PIX</p>' +
-          '<div class="pm-price">' + fmtPrice(data.amount) + '</div>' +
+          '<div class="pm-price">' + PixShared.fmtPrice(data.amount) + '</div>' +
           '<div class="pm-qr"><img id="pm-qr" alt="QR PIX" src="' + qrSrc + '"></div>' +
           '<div class="pm-label">PIX Copia e Cola</div>' +
           '<div class="pm-code" id="pm-code"></div>' +
@@ -294,6 +288,8 @@
           '<button type="button" class="pm-btn pm-btn-paid" id="pm-paid" ' + btnInitialDisabled + '>' +
             (gated ? '<span class="spinner" style="margin-right:8px;"></span>' : '') + btnInitialText +
           '</button>';
+
+        PixShared.trackEvent('InitiateCheckout', { data, customer: currentCustomer, slug: currentSlug });
 
         // Inicia polling se gate ativo. Se desabilitado, usuário confia como antes.
         if (gated && data.transactionId) startPolling(data);
@@ -321,29 +317,14 @@
         };
 
         document.getElementById('pm-paid').onclick = () => {
+          const btn = document.getElementById('pm-paid');
           // Se gate ativo, botão só habilita quando polling confirma.
-          if (document.getElementById('pm-paid').disabled) return;
+          if (btn.disabled) return;
+          if (btn.dataset.clicked) return; // evita disparo duplo (clique manual + auto-avanço)
+          btn.dataset.clicked = '1';
           // Purchase (Xa do bundle foi neutralizado pra evitar inflar Meta).
           // event_id = transactionId → dedupe com Events API server-side (Meta + TikTok).
-          const valueBRL = (data.amount || 0) / 100;
-          const contentName = data.description || 'Pagamento';
-          const eventId = data.transactionId || undefined;
-          if (typeof window.fbq === 'function') {
-            try { window.fbq('track', 'Purchase',
-              { content_name: contentName, currency: 'BRL', value: valueBRL },
-              { eventID: eventId }
-            ); } catch {}
-          }
-          if (typeof window.ttq === 'object' && typeof window.ttq.track === 'function') {
-            try { window.ttq.track('CompletePayment', {
-              content_id: data.slug || undefined,
-              content_name: contentName,
-              content_type: 'product',
-              currency: 'BRL',
-              value: valueBRL,
-              quantity: 1,
-            }, { event_id: eventId }); } catch {}
-          }
+          PixShared.trackEvent('Purchase', { data, customer: currentCustomer, slug: currentSlug });
           // Vai pro /retorno — mantém a UX do fluxo antigo (animação
           // "Processando… ✓ Confirmado" → auto-navega pro upsell).
           // /retorno lê localStorage.checkout_next_url que o d5 já setou.
@@ -353,48 +334,21 @@
 
       // Poll /api/pix-status a cada 3s. Ao detectar paid, habilita botão e
       // troca copy pra "Pagamento confirmado". Timeout 8min → mostra expirado.
+      // Sem fallback por tempo: botão só libera com confirmação real (paid).
       function startPolling(data) {
         stopPolling();
-        pollStartMs = Date.now();
-        var fallbackFired = false;
-        const tick = async () => {
-          try {
-            const r = await fetch('https://icred-br.vercel.app/api/pix-status?id=' + encodeURIComponent(data.transactionId));
-            const s = await r.json();
-            if (s.paid) {
-              stopPolling();
-              markConfirmed(data);
-              return;
-            }
-          } catch { /* silent — próximo tick tenta de novo */ }
-          const elapsed = Date.now() - pollStartMs;
-          // Fallback 45s: se webhook do gateway não chega (dropou, URL errada, etc),
-          // libera botão sem confirmar. Continua pollando pra atualizar caso venha depois.
-          if (!fallbackFired && elapsed > FALLBACK_ENABLE_MS) {
-            fallbackFired = true;
-            markFallback(data);
-          }
-          if (elapsed > POLL_TIMEOUT_MS) {
-            stopPolling();
-            markExpired();
-          }
-        };
-        // Fire once imediato + intervalo
-        tick();
-        pollTimer = setInterval(tick, POLL_INTERVAL_MS);
+        activePoll = PixShared.poll({
+          transactionId: data.transactionId,
+          expiresAt: data.expiresAt,
+          intervalMs: POLL_INTERVAL_MS,
+          timeoutMs: POLL_TIMEOUT_MS,
+          onPaid: () => markConfirmed(),
+          onRejected: (status) => markRejected(status),
+          onExpired: () => markExpired(),
+        });
       }
 
-      function markFallback(data) {
-        // Habilita botão sem "✓ confirmado" — trata como "confie no user".
-        const btn = document.getElementById('pm-paid');
-        const desc = document.getElementById('pm-desc');
-        if (!btn || btn.disabled === false) return;
-        if (desc) desc.textContent = 'Já pagou? Clique em continuar abaixo.';
-        btn.disabled = false;
-        btn.innerHTML = 'Já paguei — Continuar';
-      }
-
-      function markConfirmed(data) {
+      function markConfirmed() {
         const btn = document.getElementById('pm-paid');
         const badge = document.getElementById('pm-badge');
         const desc = document.getElementById('pm-desc');
@@ -404,7 +358,19 @@
         btn.disabled = false;
         btn.innerHTML = '✓ Continuar';
         // Optional: auto-avança em 1.5s
-        setTimeout(() => { if (btn && !btn.dataset.clicked) btn.click(); }, 1500);
+        setTimeout(() => { const b = document.getElementById('pm-paid'); if (b && !b.dataset.clicked) b.click(); }, 1500);
+      }
+
+      function markRejected(status) {
+        const btn = document.getElementById('pm-paid');
+        const badge = document.getElementById('pm-badge');
+        const desc = document.getElementById('pm-desc');
+        const msg = status === 'refunded' ? 'PIX estornado'
+                  : status === 'chargeback' ? 'Pagamento contestado'
+                  : 'Pagamento recusado';
+        if (badge) { badge.textContent = msg; badge.style.background = '#fef2f2'; badge.style.color = '#b91c1c'; }
+        if (desc) desc.textContent = 'Feche e gere um novo PIX.';
+        if (btn) { btn.disabled = true; btn.innerHTML = 'Gere um novo PIX'; }
       }
 
       function markExpired() {
@@ -426,7 +392,9 @@
       // fullUrl = /checkout.html?p=SLUG&name=...&email=... (produzido por R8)
       // nextPath = /upsellN (ou similar) — pra onde navegar quando pagar.
       window.__pixModal = function (url, nextPath) {
-        currentNext = nextPath || null;
+        if (isLoading) return; // evita 2 fetches concorrentes em duplo clique
+        // nextPath já foi salvo em localStorage.checkout_next_url pelo d5()
+        // do bundle antes desta chamada — /retorno lê de lá, não daqui.
         const slug = extractSlug(url);
         if (!slug) { window.location.href = url; return; }
 
@@ -437,10 +405,13 @@
           return;
         }
 
+        currentSlug = slug;
+        currentCustomer = customer;
+        isLoading = true;
         open();
         renderLoading();
 
-        fetch('https://icred-br.vercel.app/api/create-pix', {
+        fetch('/api/create-pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug, customer }),
@@ -450,7 +421,8 @@
             if (!ok || !data.qrcode) throw new Error(data.error || 'Falha ao gerar PIX');
             renderPix(data);
           })
-          .catch((err) => renderError(err.message || 'Erro inesperado', url));
+          .catch((err) => renderError(err.message || 'Erro inesperado', url))
+          .finally(() => { isLoading = false; });
       };
     })();
     </script>
