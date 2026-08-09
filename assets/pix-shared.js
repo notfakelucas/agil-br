@@ -55,10 +55,11 @@ window.PixShared = (function () {
     } catch {}
   }
 
-  // Flevopay's expires_at is only trusted within a sane 1-15min window
-  // (typical PIX expiry). Anything outside that (bad parse, wrong tz,
-  // missing field) falls back to the caller's default timeout instead
-  // of risking a bogus too-short/too-long poll window.
+  // expiresAt (quando o gateway manda) só é confiado dentro de uma janela
+  // sã de 1-15min (expiração típica de PIX). Fora disso (parse ruim, tz
+  // errada, campo ausente — hoje o FreePay nem manda esse campo) cai pro
+  // timeout padrão do caller, em vez de arriscar uma janela de poll
+  // bizarramente curta ou longa.
   function computeTimeoutMs(expiresAt, fallbackMs) {
     if (!expiresAt) return fallbackMs;
     try {
