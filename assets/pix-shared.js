@@ -8,32 +8,35 @@ window.PixShared = (function () {
     return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + c + '</span>';
   }
 
-  const TTK_EVENT_MAP = { InitiateCheckout: 'InitiateCheckout', Purchase: 'CompletePayment' };
+  function getCookie(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : undefined;
+  }
 
-  // Fires Meta Pixel + TikTok Pixel (client) and /api/meta-capi (server),
-  // all sharing the same event_id so Meta/TikTok dedupe client vs server.
-  function trackEvent(event, { data, customer, slug }) {
+  // Fires Meta Pixel (client, com Advanced Matching) + /api/meta-capi (server),
+  // ambos com o mesmo event_id pra Meta dedupear client vs server.
+  function trackEvent(event, { data, customer }) {
     const value = (data.amount || 0) / 100;
     const contentName = data.description || 'Pagamento';
     const eventId = data.transactionId || undefined;
 
+    const nameParts = String(customer?.name || '').trim().split(/\s+/).filter(Boolean);
+    const firstName = nameParts[0] || undefined;
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : undefined;
+    const cpfDigits = customer?.cpf ? String(customer.cpf).replace(/\D/g, '') : undefined;
+
     if (typeof window.fbq === 'function') {
       try {
+        // Advanced Matching manual — pixel normaliza e hasheia (SHA-256)
+        // antes de enviar, não precisa hashear aqui.
+        window.fbq('set', 'userData', {
+          em: customer?.email || undefined,
+          ph: customer?.phone || undefined,
+          fn: firstName,
+          ln: lastName,
+          external_id: cpfDigits,
+        });
         window.fbq('track', event, { content_name: contentName, currency: 'BRL', value }, { eventID: eventId });
-      } catch {}
-    }
-
-    const ttkEvent = TTK_EVENT_MAP[event];
-    if (ttkEvent && typeof window.ttq === 'object' && typeof window.ttq.track === 'function') {
-      try {
-        window.ttq.track(ttkEvent, {
-          content_id: slug || undefined,
-          content_name: contentName,
-          content_type: 'product',
-          currency: 'BRL',
-          value,
-          quantity: 1,
-        }, { event_id: eventId });
       } catch {}
     }
 
@@ -50,6 +53,11 @@ window.PixShared = (function () {
           content_name: contentName,
           email: customer?.email,
           phone: customer?.phone,
+          firstName,
+          lastName,
+          externalId: cpfDigits,
+          fbc: getCookie('_fbc'),
+          fbp: getCookie('_fbp'),
         }),
       }).catch(() => {});
     } catch {}

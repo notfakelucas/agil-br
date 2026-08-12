@@ -42,7 +42,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { event_name, event_id, event_source_url, value, currency, content_name, email, phone } = req.body || {};
+  const {
+    event_name, event_id, event_source_url, value, currency, content_name,
+    email, phone, firstName, lastName, externalId, fbc, fbp,
+  } = req.body || {};
 
   if (!ALLOWED_EVENTS.has(event_name)) {
     res.status(400).json({ success: false, error: "invalid event_name" });
@@ -55,6 +58,12 @@ export default async function handler(req, res) {
   };
   if (email) userData.em = [sha256(email)];
   if (phone) userData.ph = [sha256(phone.replace(/\D/g, ""))];
+  if (firstName) userData.fn = [sha256(firstName)];
+  if (lastName) userData.ln = [sha256(lastName)];
+  if (externalId) userData.external_id = [sha256(externalId)];
+  // fbc/fbp são identificadores de clique/browser do próprio Meta — não se hasheia.
+  if (fbc) userData.fbc = fbc;
+  if (fbp) userData.fbp = fbp;
 
   const payload = {
     data: [
