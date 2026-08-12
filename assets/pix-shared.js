@@ -8,53 +8,6 @@ window.PixShared = (function () {
     return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + c + '</span>';
   }
 
-  const TTK_EVENT_MAP = { InitiateCheckout: 'InitiateCheckout', Purchase: 'CompletePayment' };
-
-  // Fires Meta Pixel + TikTok Pixel (client) and /api/meta-capi (server),
-  // all sharing the same event_id so Meta/TikTok dedupe client vs server.
-  function trackEvent(event, { data, customer, slug }) {
-    const value = (data.amount || 0) / 100;
-    const contentName = data.description || 'Pagamento';
-    const eventId = data.transactionId || undefined;
-
-    if (typeof window.fbq === 'function') {
-      try {
-        window.fbq('track', event, { content_name: contentName, currency: 'BRL', value }, { eventID: eventId });
-      } catch {}
-    }
-
-    const ttkEvent = TTK_EVENT_MAP[event];
-    if (ttkEvent && typeof window.ttq === 'object' && typeof window.ttq.track === 'function') {
-      try {
-        window.ttq.track(ttkEvent, {
-          content_id: slug || undefined,
-          content_name: contentName,
-          content_type: 'product',
-          currency: 'BRL',
-          value,
-          quantity: 1,
-        }, { event_id: eventId });
-      } catch {}
-    }
-
-    try {
-      fetch('/api/meta-capi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event_name: event,
-          event_id: eventId,
-          event_source_url: window.location.href,
-          value,
-          currency: 'BRL',
-          content_name: contentName,
-          email: customer?.email,
-          phone: customer?.phone,
-        }),
-      }).catch(() => {});
-    } catch {}
-  }
-
   // expiresAt (quando o gateway manda) só é confiado dentro de uma janela
   // sã de 1-15min (expiração típica de PIX). Fora disso (parse ruim, tz
   // errada, campo ausente — hoje o FreePay nem manda esse campo) cai pro
@@ -108,5 +61,5 @@ window.PixShared = (function () {
     return { stop };
   }
 
-  return { fmtPrice, trackEvent, poll };
+  return { fmtPrice, poll };
 })();
