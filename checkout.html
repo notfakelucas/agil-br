@@ -325,8 +325,6 @@
       if (btn.disabled) return;
       if (btn.dataset.clicked) return; // evita disparo duplo (clique manual + auto-avanço)
       btn.dataset.clicked = '1';
-      // Purchase real (Xa do bundle foi neutralizado pra evitar inflar Meta).
-      if (pixData) PixShared.trackEvent('Purchase', { data: pixData, customer: lastCustomer, slug });
       safeClearCached(slug);
       window.location.href = redirectUrl;
     });
@@ -420,6 +418,10 @@
       const badge = document.getElementById('pix-badge');
       if (badge) { badge.style.display = 'inline-flex'; badge.textContent = 'Pagamento confirmado ✓'; }
       if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continuar'; }
+      // Purchase — só o pixel client-side (sem CAPI, sem advanced matching, sem event_id/dedup).
+      if (typeof window.fbq === 'function' && pixData) {
+        try { window.fbq('track', 'Purchase', { value: (pixData.amount || 0) / 100, currency: 'BRL' }); } catch {}
+      }
       // Auto-avança em 1.5s
       setTimeout(() => { const b = document.getElementById('btn-paid'); if (b && !b.dataset.clicked) b.click(); }, 1500);
     }
