@@ -8,6 +8,61 @@ window.PixShared = (function () {
     return 'R$ ' + reais.toLocaleString('pt-BR') + '<span class="cents">,' + c + '</span>';
   }
 
+  function getCookie(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : undefined;
+  }
+
+  // Fires Meta Pixel (client, com Advanced Matching) + /api/meta-capi (server),
+  // ambos com o mesmo event_id pra Meta dedupear client vs server.
+  function trackEvent(event, { data, customer }) {
+    const value = (data.amount || 0) / 100;
+    const contentName = data.description || 'Pagamento';
+    const eventId = data.transactionId || undefined;
+
+    const nameParts = String(customer?.name || '').trim().split(/\s+/).filter(Boolean);
+    const firstName = nameParts[0] || undefined;
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : undefined;
+    const cpfDigits = customer?.cpf ? String(customer.cpf).replace(/\D/g, '') : undefined;
+
+    if (typeof window.fbq === 'function') {
+      try {
+        // Advanced Matching manual — pixel normaliza e hasheia (SHA-256)
+        // antes de enviar, não precisa hashear aqui.
+        window.fbq('set', 'userData', {
+          em: customer?.email || undefined,
+          ph: customer?.phone || undefined,
+          fn: firstName,
+          ln: lastName,
+          external_id: cpfDigits,
+        });
+        window.fbq('track', event, { content_name: contentName, currency: 'BRL', value }, { eventID: eventId });
+      } catch {}
+    }
+
+    try {
+      fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: event,
+          event_id: eventId,
+          event_source_url: window.location.href,
+          value,
+          currency: 'BRL',
+          content_name: contentName,
+          email: customer?.email,
+          phone: customer?.phone,
+          firstName,
+          lastName,
+          externalId: cpfDigits,
+          fbc: getCookie('_fbc'),
+          fbp: getCookie('_fbp'),
+        }),
+      }).catch(() => {});
+    } catch {}
+  }
+
   // expiresAt (quando o gateway manda) só é confiado dentro de uma janela
   // sã de 1-15min (expiração típica de PIX). Fora disso (parse ruim, tz
   // errada, campo ausente — hoje o FreePay nem manda esse campo) cai pro
@@ -61,5 +116,5 @@ window.PixShared = (function () {
     return { stop };
   }
 
-  return { fmtPrice, poll };
+  return { fmtPrice, trackEvent, poll };
 })();
