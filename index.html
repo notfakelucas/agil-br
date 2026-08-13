@@ -254,7 +254,7 @@
         const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' +
           encodeURIComponent(data.qrcode);
         // gateEnabled vem sempre true do server hoje (sem KV no projeto — ver
-        // freepay-webhook.js). Se algum dia a criação de PIX puder responder
+        // pingupag-webhook.js). Se algum dia a criação de PIX puder responder
         // sem gate, o botão fica liberado direto em vez de esperar o polling.
         const gated = data.gateEnabled === true;
         const btnInitialText = gated ? 'Aguardando pagamento…' : 'Já paguei — Continuar';
