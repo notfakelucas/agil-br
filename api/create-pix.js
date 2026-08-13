@@ -1,7 +1,7 @@
-// Server-side PIX generation via FreePay Brasil. Keys never touch the client.
+// Server-side PIX generation via PinguPag. Keys never touch the client.
 // Front-end only ever sees { qrcode, amount, description, transactionId, gateEnabled, slug }.
 
-const FREEPAY_URL = "https://api.freepaybrasil.com/v1/payment-transaction/create";
+const PINGUPAG_URL = "https://app.pingupag.com/api/v1/transaction";
 
 // Catalog mirrors the amounts/descriptions shown on each front-end screen
 // (assets/index-BPEpE3Sa.js). Amounts here must match the price the customer
@@ -55,9 +55,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  const PUB = process.env.FREEPAY_PUBLIC_KEY;
-  const SEC = process.env.FREEPAY_SECRET_KEY;
-  if (!PUB || !SEC) {
+  const API_KEY = process.env.PINGUPAG_SECRET_KEY;
+  if (!API_KEY) {
     res.status(500).json({ success: false, error: "gateway not configured" });
     return;
   }
@@ -80,48 +79,37 @@ export default async function handler(req, res) {
   }
 
   const origin = `https://${req.headers.host}`;
-  const auth = "Basic " + Buffer.from(`${PUB}:${SEC}`).toString("base64");
+  // Referência única — PinguPag não gera uma pra gente, e ela mais tarde
+  // permite achar a transação via /query?action=list_transactions.
+  const reference = `${slug}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
   try {
-    const r = await fetch(FREEPAY_URL, {
+    const r = await fetch(PINGUPAG_URL, {
       method: "POST",
       headers: {
-        Authorization: auth,
+        "X-API-Key": API_KEY,
         "Content-Type": "application/json",
-        Accept: "application/json",
       },
       body: JSON.stringify({
         amount: product.amount,
-        payment_method: "pix",
-        postback_url: `${origin}/api/freepay-webhook`,
-        customer: {
-          name, email,
-          document: { type: "cpf", number: cpf },
-          phone,
-        },
-        items: [{
-          title: product.description,
-          description: product.description,
-          unit_price: product.amount,
-          quantity: 1,
-          tangible: false,
-        }],
-        metadata: { slug },
+        description: product.description,
+        reference,
+        // Produtos não são cadastrados no painel da PinguPag (catálogo é
+        // nosso, acima) — api_externa pula a validação de productHash.
+        source: "api_externa",
+        postback_url: `${origin}/api/pingupag-webhook`,
+        customer: { name, email, document: cpf, phone },
       }),
       signal: AbortSignal.timeout(25_000),
     });
     const data = await r.json();
-    if (!r.ok || data?.success === false) {
-      const msg = Array.isArray(data?.error_messages) && data.error_messages[0]?.message
-        ? data.error_messages[0].message
-        : (data.error || data.message || "gateway error");
-      res.status(502).json({ success: false, error: msg });
+    if (!r.ok || data?.status !== "success") {
+      res.status(502).json({ success: false, error: data?.message || data?.error || "gateway error" });
       return;
     }
-    const tx = data?.data || {};
-    const qrcode = tx?.pix?.qr_code;
-    const transactionId = tx?.id;
-    if (!qrcode || !transactionId) {
+    const qrcode = data?.qr_code;
+    const transactionId = data?.transaction_id;
+    if (!qrcode || transactionId == null) {
       res.status(502).json({ success: false, error: "malformed gateway response" });
       return;
     }
@@ -131,7 +119,7 @@ export default async function handler(req, res) {
       amount: product.amount,
       description: product.description,
       transactionId: String(transactionId),
-      expiresAt: null,
+      expiresAt: data?.expires_at || null,
       gateEnabled: true,
       slug,
     });

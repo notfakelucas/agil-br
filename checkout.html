@@ -477,7 +477,7 @@
       return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
     }
     // ---- localStorage cache (reload safety, TTL 30min) ----
-    function cacheKey(s) { return 'freepay:tx:' + s; }
+    function cacheKey(s) { return 'pingupag:tx:' + s; }
     function safeCache(s, data) {
       try {
         localStorage.setItem(cacheKey(s), JSON.stringify({ ...data, ts: Date.now() }));
@@ -488,7 +488,7 @@
         const raw = localStorage.getItem(cacheKey(s));
         if (!raw) return null;
         const d = JSON.parse(raw);
-        // PIX FreePay expira em ~5-10min → cache 8min alinhado.
+        // PIX PinguPag expira em ~5-10min → cache 8min alinhado.
         if (Date.now() - (d.ts || 0) > 8 * 60 * 1000) { localStorage.removeItem(cacheKey(s)); return null; }
         return d;
       } catch { return null; }
