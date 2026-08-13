@@ -312,8 +312,6 @@
       if (btn.disabled) return;
       if (btn.dataset.clicked) return; // evita disparo duplo (clique manual + auto-avanço)
       btn.dataset.clicked = '1';
-      // Purchase real (Xa do bundle foi neutralizado pra evitar inflar Meta).
-      if (pixData) PixShared.trackEvent('Purchase', { data: pixData, customer: lastCustomer });
       safeClearCached(slug);
       window.location.href = redirectUrl;
     });
@@ -407,6 +405,10 @@
       const badge = document.getElementById('pix-badge');
       if (badge) { badge.style.display = 'inline-flex'; badge.textContent = 'Pagamento confirmado ✓'; }
       if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continuar'; }
+      // Purchase — só o pixel client-side (sem CAPI, sem advanced matching, sem event_id/dedup).
+      if (typeof window.fbq === 'function' && pixData) {
+        try { window.fbq('track', 'Purchase', { value: (pixData.amount || 0) / 100, currency: 'BRL' }); } catch {}
+      }
       // Auto-avança em 1.5s
       setTimeout(() => { const b = document.getElementById('btn-paid'); if (b && !b.dataset.clicked) b.click(); }, 1500);
     }
@@ -475,7 +477,7 @@
       return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
     }
     // ---- localStorage cache (reload safety, TTL 30min) ----
-    function cacheKey(s) { return 'freepay:tx:' + s; }
+    function cacheKey(s) { return 'pingupag:tx:' + s; }
     function safeCache(s, data) {
       try {
         localStorage.setItem(cacheKey(s), JSON.stringify({ ...data, ts: Date.now() }));
@@ -486,7 +488,7 @@
         const raw = localStorage.getItem(cacheKey(s));
         if (!raw) return null;
         const d = JSON.parse(raw);
-        // PIX FreePay expira em ~5-10min → cache 8min alinhado.
+        // PIX PinguPag expira em ~5-10min → cache 8min alinhado.
         if (Date.now() - (d.ts || 0) > 8 * 60 * 1000) { localStorage.removeItem(cacheKey(s)); return null; }
         return d;
       } catch { return null; }

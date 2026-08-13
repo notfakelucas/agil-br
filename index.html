@@ -203,6 +203,7 @@
       const body = document.getElementById('pm-body');
       let currentSlug = null;
       let currentCustomer = null;
+      let currentPixData = null;
       let isLoading = false;
       let activePoll = null;
       const POLL_INTERVAL_MS = 3000;
@@ -249,10 +250,11 @@
         };
       }
       function renderPix(data) {
+        currentPixData = data;
         const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=' +
           encodeURIComponent(data.qrcode);
         // gateEnabled vem sempre true do server hoje (sem KV no projeto — ver
-        // freepay-webhook.js). Se algum dia a criação de PIX puder responder
+        // pingupag-webhook.js). Se algum dia a criação de PIX puder responder
         // sem gate, o botão fica liberado direto em vez de esperar o polling.
         const gated = data.gateEnabled === true;
         const btnInitialText = gated ? 'Aguardando pagamento…' : 'Já paguei — Continuar';
@@ -310,9 +312,6 @@
           if (btn.disabled) return;
           if (btn.dataset.clicked) return; // evita disparo duplo (clique manual + auto-avanço)
           btn.dataset.clicked = '1';
-          // Purchase (Xa do bundle foi neutralizado pra evitar inflar Meta).
-          // event_id = transactionId → dedupe com Events API server-side.
-          PixShared.trackEvent('Purchase', { data, customer: currentCustomer });
           // Vai pro /retorno — mantém a UX do fluxo antigo (animação
           // "Processando… ✓ Confirmado" → auto-navega pro upsell).
           // /retorno lê localStorage.checkout_next_url que o d5 já setou.
@@ -345,6 +344,10 @@
         if (desc) desc.textContent = 'Recebemos seu PIX. Clique para continuar.';
         btn.disabled = false;
         btn.innerHTML = '✓ Continuar';
+        // Purchase — só o pixel client-side (sem CAPI, sem advanced matching, sem event_id/dedup).
+        if (typeof window.fbq === 'function' && currentPixData) {
+          try { window.fbq('track', 'Purchase', { value: (currentPixData.amount || 0) / 100, currency: 'BRL' }); } catch {}
+        }
         // Optional: auto-avança em 1.5s
         setTimeout(() => { const b = document.getElementById('pm-paid'); if (b && !b.dataset.clicked) b.click(); }, 1500);
       }

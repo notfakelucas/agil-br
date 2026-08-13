@@ -46,10 +46,8 @@ export default async function handler(req, res) {
   }
 
   const {
-    event_name, event_id, event_source_url,
-    value, currency, content_name,
-    email, phone, firstName, lastName, externalId,
-    fbc, fbp,
+    event_name, event_id, event_source_url, value, currency, content_name,
+    email, phone, firstName, lastName, externalId, fbc, fbp,
   } = req.body || {};
 
   if (!ALLOWED_EVENTS.has(event_name)) {
